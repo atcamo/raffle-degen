@@ -5,6 +5,7 @@ import { base } from 'wagmi/chains';
 
 const DEGEN_TOKEN_ADDRESS = '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed'; // DEGEN token address
 const RAFFLE_CONTRACT_ADDRESS = '0x2026eD696e1bbA70eC3Ff3F7Dc95FE0E851bd928'; // Replace with deployed contract address
+const TICKET_PRICE = 10; // Precio en DEGEN por boleto
 
 const BuyTickets = () => {
   const { address } = useAccount();
@@ -131,8 +132,8 @@ const BuyTickets = () => {
       return;
     }
 
-    const ticketPrice = parseEther('10'); // 10 DEGEN per ticket
-    const totalAmount = ticketPrice * BigInt(ticketAmount);
+    // Calcular el total exacto en wei
+    const totalAmount = parseEther((TICKET_PRICE * ticketAmount).toString());
 
     // Solo aprobar si la cantidad aprobada es menor que la cantidad necesaria
     if (approvedAmount < totalAmount) {
@@ -147,7 +148,7 @@ const BuyTickets = () => {
   };
 
   // Calcular el total en DEGEN
-  const totalInDegen = ticketAmount * 10;
+  const totalInDegen = ticketAmount * TICKET_PRICE;
 
   return (
     <div className="p-4 bg-white rounded-lg">
@@ -176,7 +177,7 @@ const BuyTickets = () => {
 
       <div className="mb-4">
         <p className="text-sm text-gray-700">
-          Precio por boleto: 10 DEGEN
+          Precio por boleto: {TICKET_PRICE} DEGEN
         </p>
         <p className="text-sm text-gray-700">
           Total: {totalInDegen} DEGEN
