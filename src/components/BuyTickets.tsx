@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAccount, useContractRead, useContractWrite, useWaitForTransaction, useConnect, useNetwork, useSwitchNetwork } from 'wagmi';
 import { parseEther } from 'viem';
 import { base } from 'wagmi/chains';
@@ -12,6 +12,7 @@ const BuyTickets = () => {
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
   const [ticketAmount, setTicketAmount] = useState(1);
+  const [approvedAmount, setApprovedAmount] = useState(BigInt(0));
 
   // Check allowance
   const { data: allowance = BigInt(0) } = useContractRead({
@@ -32,6 +33,13 @@ const BuyTickets = () => {
     args: [address, RAFFLE_CONTRACT_ADDRESS],
     enabled: !!address
   }) as { data: bigint };
+
+  // Actualizar la cantidad aprobada cuando cambie el allowance
+  useEffect(() => {
+    if (allowance) {
+      setApprovedAmount(allowance);
+    }
+  }, [allowance]);
 
   // Get user tickets
   const { data: userTickets = BigInt(0) } = useContractRead({
@@ -126,8 +134,8 @@ const BuyTickets = () => {
     const ticketPrice = parseEther('10'); // 10 DEGEN per ticket
     const totalAmount = ticketPrice * BigInt(ticketAmount);
 
-    // Solo aprobar la cantidad exacta que se va a gastar
-    if (allowance < totalAmount) {
+    // Solo aprobar si la cantidad aprobada es menor que la cantidad necesaria
+    if (approvedAmount < totalAmount) {
       approve({
         args: [RAFFLE_CONTRACT_ADDRESS, totalAmount]
       });
