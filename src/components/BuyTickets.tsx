@@ -2,12 +2,10 @@ import { useState, useEffect } from 'react';
 import { useAccount, useContractRead, useContractWrite, useWaitForTransaction, useConnect, useNetwork, useSwitchNetwork } from 'wagmi';
 import { parseEther } from 'viem';
 import { base } from 'wagmi/chains';
-import FrameSDK from '@farcaster/frame-sdk';
 
 const DEGEN_TOKEN_ADDRESS = '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed'; // DEGEN token address
 const RAFFLE_CONTRACT_ADDRESS = '0x2026eD696e1bbA70eC3Ff3F7Dc95FE0E851bd928'; // Replace with deployed contract address
 const TICKET_PRICE = 10; // Precio en DEGEN por boleto
-const privateKey = '2b280e4bcd1a7eed373423a9b0a61f77f9d7527ef8804cdcc82e8d66d312d2b0';
 
 const BuyTickets = () => {
   const { address } = useAccount();
@@ -16,7 +14,6 @@ const BuyTickets = () => {
   const { switchNetwork } = useSwitchNetwork();
   const [degenAmount, setDegenAmount] = useState(10);
   const [approvedAmount, setApprovedAmount] = useState(BigInt(0));
-  const frame = new FrameSDK();
 
   // Check allowance
   const { data: allowance = BigInt(0) } = useContractRead({
@@ -126,10 +123,10 @@ const BuyTickets = () => {
     hash: buyTicketsData?.hash,
     onSuccess: () => {
       // Notificar a Farcaster que la compra fue exitosa
-      frame.postMessage({
-        type: 'tx-success',
-        message: `¡Compra exitosa! Has comprado ${degenAmount / TICKET_PRICE} boletos por ${degenAmount} DEGEN`
-      });
+      // frame.postMessage({
+      //   type: 'tx-success',
+      //   message: `¡Compra exitosa! Has comprado ${degenAmount / TICKET_PRICE} boletos por ${degenAmount} DEGEN`
+      // });
     }
   });
 
@@ -161,10 +158,10 @@ const BuyTickets = () => {
     // Asegurarnos de que la cantidad sea múltiplo de 10
     if (degenAmount % 10 !== 0) {
       console.error('La cantidad debe ser múltiplo de 10');
-      frame.postMessage({
-        type: 'error',
-        message: 'La cantidad debe ser múltiplo de 10'
-      });
+      // frame.postMessage({
+      //   type: 'error',
+      //   message: 'La cantidad debe ser múltiplo de 10'
+      // });
       return;
     }
 
@@ -180,10 +177,10 @@ const BuyTickets = () => {
         console.log('Necesita aprobación. Cantidad a aprobar:', totalNeeded.toString());
         
         // Notificar a Farcaster que se necesita aprobación
-        frame.postMessage({
-          type: 'approval-needed',
-          message: `Necesitas aprobar ${degenAmount} DEGEN para comprar ${degenAmount / TICKET_PRICE} boletos`
-        });
+        // frame.postMessage({
+        //   type: 'approval-needed',
+        //   message: `Necesitas aprobar ${degenAmount} DEGEN para comprar ${degenAmount / TICKET_PRICE} boletos`
+        // });
         
         // Aprobar la cantidad exacta que necesitamos
         approve({
@@ -200,10 +197,10 @@ const BuyTickets = () => {
       });
     } catch (error) {
       console.error('Error en la transacción:', error);
-      frame.postMessage({
-        type: 'error',
-        message: 'Error al procesar la transacción'
-      });
+      // frame.postMessage({
+      //   type: 'error',
+      //   message: 'Error al procesar la transacción'
+      // });
     }
   };
 
