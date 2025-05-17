@@ -1,0 +1,66 @@
+headersOrigin = "config"
+redirectsOrigin = "config"
+plugins = []
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "C:\\Users\\calde\\raffle-degen\\dist"
+publishOrigin = "config"
+commandOrigin = "config"
+command = "npm run build"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[[headers]]
+for = "/*"
+
+[headers.values]
+Content-Security-Policy = "frame-ancestors 'self' https://*.warpcast.com https://warpcast.com https://*.farcaster.xyz"
+X-Frame-Options = "ALLOW-FROM https://warpcast.com"
+Access-Control-Allow-Origin = "*"
+
+[[headers]]
+for = "/.well-known/farcaster-manifest.json"
+
+[headers.values]
+Content-Type = "application/json"
+Access-Control-Allow-Origin = "*"
+
+[[redirects]]
+from = "/.well-known/farcaster-manifest.json"
+to = "/.well-known/farcaster-manifest.json"
+status = 200.0
+force = true
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]

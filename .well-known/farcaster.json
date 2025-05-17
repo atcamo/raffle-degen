@@ -1,0 +1,18 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjQzMjc4OSwidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDEyMzQ1Njc4OTBhYmNkZWYifQ==",
+    "payload": "eyJkb21haW4iOiJyYWZmbGUtZGVnZW4ubmV0bGlmeS5hcHAifQ==",
+    "signature": "MHgxMjM0NTY3ODkwYWJjZGVmMTIzNDU2Nzg5MGFiY2RlZjEyMzQ1Njc4OTBhYmNkZWYxMjM0NTY3ODkwYWJjZGVm"
+  },
+  "frame": {
+    "version": "1",
+    "name": "Raffle DEGEN",
+    "iconUrl": "https://raffle-degen.netlify.app/og-image.svg",
+    "homeUrl": "https://raffle-degen.netlify.app",
+    "imageUrl": "https://raffle-degen.netlify.app/og-image.svg",
+    "buttonTitle": "🎫 Comprar Boletos",
+    "splashImageUrl": "https://raffle-degen.netlify.app/og-image.svg",
+    "splashBackgroundColor": "#6B21A8",
+    "webhookUrl": "https://raffle-degen.netlify.app/api/webhook"
+  }
+} 

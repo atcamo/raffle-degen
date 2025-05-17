@@ -1,0 +1,11 @@
+{
+  "name": "Raffle DEGEN",
+  "description": "Compra boletos para participar en el sorteo de DEGEN tokens",
+  "icon": "https://raffle-degen.netlify.app/og-image.svg",
+  "url": "https://raffle-degen.netlify.app",
+  "frame": {
+    "image": "https://raffle-degen.netlify.app/og-image.svg",
+    "button": "Comprar Boletos",
+    "post_url": "https://raffle-degen.netlify.app"
+  }
+} 

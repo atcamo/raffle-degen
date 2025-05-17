@@ -1,0 +1,21 @@
+{
+  "frame": {
+    "version": "1",
+    "name": "Raffle DEGEN",
+    "iconUrl": "https://raffle-degen.netlify.app/og-image.svg",
+    "homeUrl": "https://raffle-degen.netlify.app",
+    "imageUrl": "https://raffle-degen.netlify.app/og-image.svg",
+    "buttonTitle": "🎫 Comprar Boletos",
+    "splashImageUrl": "https://raffle-degen.netlify.app/og-image.svg",
+    "splashBackgroundColor": "#6B21A8",
+    "subtitle": "Sorteo de DEGEN tokens",
+    "description": "Participa en el sorteo de DEGEN tokens. Compra boletos y gana premios increíbles.",
+    "primaryCategory": "finance",
+    "tags": ["raffle", "tokens", "degen", "base", "lottery"],
+    "heroImageUrl": "https://raffle-degen.netlify.app/og-image.svg",
+    "tagline": "¡Gana DEGEN tokens!",
+    "ogTitle": "Raffle DEGEN - Sorteo de Tokens",
+    "ogDescription": "Participa en el sorteo de DEGEN tokens. Compra boletos y gana premios increíbles.",
+    "ogImageUrl": "https://raffle-degen.netlify.app/og-image.svg"
+  }
+} 

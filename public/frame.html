@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Raffle DEGEN</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Participa en el sorteo de DEGEN tokens. Compra boletos y gana premios increíbles." />
+    
+    <!-- OpenGraph tags -->
+    <meta property="og:title" content="Raffle DEGEN - Sorteo de Tokens" />
+    <meta property="og:description" content="Participa en el sorteo de DEGEN tokens. Compra boletos y gana premios increíbles." />
+    <meta property="og:image" content="https://raffle-degen.netlify.app/og-image.svg" />
+    
+    <!-- Mini App (Frame) tags -->
+    <meta property="fc:frame" content="vNext" />
+    <meta property="fc:frame:image" content="https://raffle-degen.netlify.app/og-image.svg" />
+    <meta property="fc:frame:button:1" content="🎫 Comprar Boletos" />
+    <meta property="fc:frame:post_url" content="https://raffle-degen.netlify.app" />
+    <meta property="fc:frame:aspect_ratio" content="3:2" />
+    
+    <link rel="icon" href="/favicon.ico" />
+    <script type="module">
+        import { sdk } from '@farcaster/frame-sdk';
+        
+        window.addEventListener('load', async () => {
+            try {
+                // Obtener el contexto
+                const context = await sdk.context.getContext();
+                console.log('Context:', context);
+
+                // Indicar que la app está lista
+                await sdk.actions.ready();
+                console.log('Frame ready');
+
+                // Manejar el botón
+                const button = document.querySelector('button');
+                if (button) {
+                    button.addEventListener('click', async () => {
+                        try {
+                            await sdk.actions.openUrl('https://raffle-degen.netlify.app');
+                        } catch (error) {
+                            console.error('Error opening URL:', error);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error initializing frame:', error);
+            }
+        });
+    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #6B21A8;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        h1 {
+            font-size: 48px;
+            margin: 0 0 20px 0;
+        }
+        button {
+            background-color: #9333EA;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #7E22CE;
+        }
+    </style>
+</head>
+<body>
+    <h1>Raffle DEGEN</h1>
+    <button aria-label="Comprar boletos para el sorteo de DEGEN tokens">🎫 Comprar Boletos</button>
+</body>
+</html> 
