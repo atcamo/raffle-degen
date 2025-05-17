@@ -126,6 +126,7 @@ const BuyTickets = () => {
     const ticketPrice = parseEther('10'); // 10 DEGEN per ticket
     const totalAmount = ticketPrice * BigInt(ticketAmount);
 
+    // Solo aprobar la cantidad exacta que se va a gastar
     if (allowance < totalAmount) {
       approve({
         args: [RAFFLE_CONTRACT_ADDRESS, totalAmount]
@@ -136,6 +137,9 @@ const BuyTickets = () => {
       });
     }
   };
+
+  // Calcular el total en DEGEN
+  const totalInDegen = ticketAmount * 10;
 
   return (
     <div className="p-4 bg-white rounded-lg">
@@ -167,7 +171,7 @@ const BuyTickets = () => {
           Precio por boleto: 10 DEGEN
         </p>
         <p className="text-sm text-gray-700">
-          Total: {ticketAmount * 10} DEGEN
+          Total: {totalInDegen} DEGEN
         </p>
       </div>
 
