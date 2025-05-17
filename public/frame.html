@@ -14,7 +14,6 @@
     <!-- Mini App (Frame) tags -->
     <meta property="fc:frame" content="vNext" />
     <meta property="fc:frame:image" content="https://raffle-degen.netlify.app/og-image.svg" />
-    <meta property="fc:frame:input:text" content="Cantidad de boletos (1-10)" />
     <meta property="fc:frame:button:1" content="🎫 Comprar Boletos" />
     <meta property="fc:frame:post_url" content="https://raffle-degen.netlify.app/api/webhook" />
     <meta property="fc:frame:aspect_ratio" content="3:2" />
@@ -38,36 +37,9 @@
                 if (button) {
                     button.addEventListener('click', async () => {
                         try {
-                            const input = document.querySelector('input');
-                            const cantidad = input ? parseInt(input.value) : 1;
-                            
-                            if (cantidad < 1 || cantidad > 10) {
-                                alert('Por favor, ingresa una cantidad entre 1 y 10 boletos');
-                                return;
-                            }
-
-                            // Enviar la solicitud al webhook
-                            const response = await fetch('https://raffle-degen.netlify.app/api/webhook', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    input: { text: cantidad.toString() }
-                                })
-                            });
-
-                            const data = await response.json();
-                            
-                            if (data.success) {
-                                // Si la compra fue exitosa, redirigir a la página principal
-                                window.location.href = `https://raffle-degen.netlify.app?boletos=${cantidad}`;
-                            } else {
-                                alert(data.message || 'Error al procesar la compra');
-                            }
+                            await sdk.actions.openUrl('https://raffle-degen.netlify.app');
                         } catch (error) {
                             console.error('Error:', error);
-                            alert('Error al procesar la solicitud');
                         }
                     });
                 }
@@ -93,49 +65,32 @@
         h1 {
             font-size: 48px;
             margin: 0 0 20px 0;
-        }
-        .input-container {
-            margin: 20px 0;
-        }
-        input {
-            padding: 10px;
-            border: 2px solid #9333EA;
-            border-radius: 8px;
-            font-size: 16px;
-            width: 200px;
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
         button {
             background-color: #9333EA;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 18px;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 20px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         button:hover {
             background-color: #7E22CE;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
         }
-        .error {
-            color: #EF4444;
-            margin-top: 10px;
-            font-size: 14px;
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
     <h1>Raffle DEGEN</h1>
-    <div class="input-container">
-        <input type="number" min="1" max="10" value="1" placeholder="Cantidad de boletos (1-10)" />
-    </div>
     <button aria-label="Comprar boletos para el sorteo de DEGEN tokens">🎫 Comprar Boletos</button>
-    <div id="error" class="error" style="display: none;"></div>
 </body>
 </html> 
