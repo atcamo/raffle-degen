@@ -2,18 +2,21 @@ import { useState, useEffect } from 'react';
 import { useAccount, useContractRead, useContractWrite, useWaitForTransaction, useConnect, useNetwork, useSwitchNetwork } from 'wagmi';
 import { parseEther } from 'viem';
 import { base } from 'wagmi/chains';
+import FrameSDK from '@farcaster/frame-sdk';
 
 const DEGEN_TOKEN_ADDRESS = '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed'; // DEGEN token address
 const RAFFLE_CONTRACT_ADDRESS = '0x2026eD696e1bbA70eC3Ff3F7Dc95FE0E851bd928'; // Replace with deployed contract address
 const TICKET_PRICE = 10; // Precio en DEGEN por boleto
+const privateKey = '2b280e4bcd1a7eed373423a9b0a61f77f9d7527ef8804cdcc82e8d66d312d2b0';
 
 const BuyTickets = () => {
   const { address } = useAccount();
   const { connect, connectors } = useConnect();
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
-  const [ticketAmount, setTicketAmount] = useState(1);
+  const [degenAmount, setDegenAmount] = useState(10);
   const [approvedAmount, setApprovedAmount] = useState(BigInt(0));
+  const frame = new FrameSDK();
 
   // Check allowance
   const { data: allowance = BigInt(0) } = useContractRead({
@@ -38,6 +41,7 @@ const BuyTickets = () => {
   // Actualizar la cantidad aprobada cuando cambie el allowance
   useEffect(() => {
     if (allowance) {
+      console.log('Allowance actualizado:', allowance.toString());
       setApprovedAmount(allowance);
     }
   }, [allowance]);
@@ -108,12 +112,34 @@ const BuyTickets = () => {
   });
 
   const { isLoading: isApproving } = useWaitForTransaction({
-    hash: approveData?.hash
+    hash: approveData?.hash,
+    onSuccess: () => {
+      // Después de aprobar, proceder con la compra
+      const ticketAmount = degenAmount / TICKET_PRICE;
+      buyTickets({
+        args: [ticketAmount]
+      });
+    }
   });
 
   const { isLoading: isBuying } = useWaitForTransaction({
-    hash: buyTicketsData?.hash
+    hash: buyTicketsData?.hash,
+    onSuccess: () => {
+      // Notificar a Farcaster que la compra fue exitosa
+      frame.postMessage({
+        type: 'tx-success',
+        message: `¡Compra exitosa! Has comprado ${degenAmount / TICKET_PRICE} boletos por ${degenAmount} DEGEN`
+      });
+    }
   });
+
+  const handleDegenAmountChange = (value: string) => {
+    const amount = Number(value);
+    // Asegurarnos de que sea múltiplo de 10
+    if (amount >= 10 && amount % 10 === 0) {
+      setDegenAmount(amount);
+    }
+  };
 
   const handleBuyTickets = async () => {
     if (!address) {
@@ -132,23 +158,54 @@ const BuyTickets = () => {
       return;
     }
 
-    // Calcular el total exacto en wei
-    const totalAmount = parseEther((TICKET_PRICE * ticketAmount).toString());
-
-    // Solo aprobar si la cantidad aprobada es menor que la cantidad necesaria
-    if (approvedAmount < totalAmount) {
-      approve({
-        args: [RAFFLE_CONTRACT_ADDRESS, totalAmount]
+    // Asegurarnos de que la cantidad sea múltiplo de 10
+    if (degenAmount % 10 !== 0) {
+      console.error('La cantidad debe ser múltiplo de 10');
+      frame.postMessage({
+        type: 'error',
+        message: 'La cantidad debe ser múltiplo de 10'
       });
-    } else {
+      return;
+    }
+
+    const totalNeeded = parseEther(degenAmount.toString());
+    
+    console.log('Cantidad en DEGEN:', degenAmount);
+    console.log('Total en wei:', totalNeeded.toString());
+    console.log('Cantidad aprobada actual:', approvedAmount.toString());
+
+    try {
+      // Solo aprobar si la cantidad aprobada es menor que la cantidad necesaria
+      if (approvedAmount < totalNeeded) {
+        console.log('Necesita aprobación. Cantidad a aprobar:', totalNeeded.toString());
+        
+        // Notificar a Farcaster que se necesita aprobación
+        frame.postMessage({
+          type: 'approval-needed',
+          message: `Necesitas aprobar ${degenAmount} DEGEN para comprar ${degenAmount / TICKET_PRICE} boletos`
+        });
+        
+        // Aprobar la cantidad exacta que necesitamos
+        approve({
+          args: [RAFFLE_CONTRACT_ADDRESS, totalNeeded]
+        });
+        return;
+      }
+
+      // Si ya tenemos suficiente aprobación, proceder con la compra
+      console.log('No necesita aprobación. Procediendo a comprar.');
+      const ticketAmount = degenAmount / TICKET_PRICE;
       buyTickets({
         args: [ticketAmount]
       });
+    } catch (error) {
+      console.error('Error en la transacción:', error);
+      frame.postMessage({
+        type: 'error',
+        message: 'Error al procesar la transacción'
+      });
     }
   };
-
-  // Calcular el total en DEGEN
-  const totalInDegen = ticketAmount * TICKET_PRICE;
 
   return (
     <div className="p-4 bg-white rounded-lg">
@@ -164,13 +221,14 @@ const BuyTickets = () => {
 
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
-          Cantidad de Boletos
+          Cantidad en DEGEN (múltiplos de 10)
         </label>
         <input
           type="number"
-          min="1"
-          value={ticketAmount}
-          onChange={(e) => setTicketAmount(Number(e.target.value))}
+          min="10"
+          step="10"
+          value={degenAmount}
+          onChange={(e) => handleDegenAmountChange(e.target.value)}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
         />
       </div>
@@ -180,7 +238,7 @@ const BuyTickets = () => {
           Precio por boleto: {TICKET_PRICE} DEGEN
         </p>
         <p className="text-sm text-gray-700">
-          Total: {totalInDegen} DEGEN
+          Cantidad de boletos: {degenAmount / TICKET_PRICE}
         </p>
       </div>
 
