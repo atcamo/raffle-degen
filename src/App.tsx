@@ -1,6 +1,12 @@
+import { useEffect } from 'react';
+import { sdk } from '@farcaster/frame-sdk';
 import BuyTickets from './components/BuyTickets';
 
-function App() {
+export default function App() {
+  useEffect(() => {
+    sdk.actions.ready();
+  }, []);
+
   return (
     <div className="min-h-screen bg-purple-900 p-4">
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-xl p-6">
@@ -16,5 +22,3 @@ function App() {
                 </div>
   );
 }
-
-export default App;
