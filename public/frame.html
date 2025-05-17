@@ -37,9 +37,20 @@
                 if (button) {
                     button.addEventListener('click', async () => {
                         try {
+                            // Primero intentamos abrir la URL
                             await sdk.actions.openUrl('https://raffle-degen.netlify.app');
+                            
+                            // Si estamos en un frame, también enviamos el post
+                            if (context.isFrame) {
+                                await sdk.actions.post({
+                                    url: 'https://raffle-degen.netlify.app/api/webhook',
+                                    data: { action: 'buy_tickets' }
+                                });
+                            }
                         } catch (error) {
                             console.error('Error:', error);
+                            // Si falla, intentamos redireccionar directamente
+                            window.location.href = 'https://raffle-degen.netlify.app';
                         }
                     });
                 }
