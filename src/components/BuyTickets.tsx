@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useAccount, useContractRead, useContractWrite, useWaitForTransaction, useConnect } from 'wagmi';
+import { useAccount, useContractRead, useContractWrite, useWaitForTransaction, useConnect, useNetwork, useSwitchNetwork } from 'wagmi';
 import { parseEther } from 'viem';
+import { base } from 'wagmi/chains';
 
 const DEGEN_TOKEN_ADDRESS = '0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed'; // DEGEN token address
 const RAFFLE_CONTRACT_ADDRESS = '0x2026eD696e1bbA70eC3Ff3F7Dc95FE0E851bd928'; // Replace with deployed contract address
@@ -8,6 +9,8 @@ const RAFFLE_CONTRACT_ADDRESS = '0x2026eD696e1bbA70eC3Ff3F7Dc95FE0E851bd928'; //
 const BuyTickets = () => {
   const { address } = useAccount();
   const { connect, connectors } = useConnect();
+  const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
   const [ticketAmount, setTicketAmount] = useState(1);
 
   // Check allowance
@@ -112,6 +115,14 @@ const BuyTickets = () => {
       return;
     }
 
+    // Verificar si estamos en la red correcta
+    if (chain?.id !== base.id) {
+      if (switchNetwork) {
+        await switchNetwork(base.id);
+      }
+      return;
+    }
+
     const ticketPrice = parseEther('10'); // 10 DEGEN per ticket
     const totalAmount = ticketPrice * BigInt(ticketAmount);
 
@@ -166,6 +177,7 @@ const BuyTickets = () => {
         className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:bg-purple-300 transition-colors duration-200"
       >
         {!address ? 'Conecta tu wallet' : 
+         chain?.id !== base.id ? 'Cambiar a Base' :
          isApproving ? 'Aprobando...' : 
          isBuying ? 'Comprando...' : 
          'Comprar Boletos'}
